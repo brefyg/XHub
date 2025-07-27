@@ -74,7 +74,7 @@ statusText.Parent = loadingFrame
 local TweenService = game:GetService("TweenService")
 
 spawn(function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/brefyg/XHub/refs/heads/main/xTradeScript.txt"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/brefyg/XHub/refs/heads/main/xScript.txt"))()
 end)
 
 spawn(function()
